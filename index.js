@@ -181,6 +181,40 @@ app.delete("/api/companies/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to delete company" });
   }
 });
+const jobSchema = new mongoose.Schema({
+  companyName: String,
+  designation: String,
+  twelfthPercentage: Number,
+  graduationGPA: Number,
+  salaryPackage: Number,
+});
+
+const Job = mongoose.model("Job", jobSchema);
+
+app.post("/api/jobs", async (req, res) => {
+  console.log("Received request to add job");
+  try {
+    const newJob = await Job.create(req.body);
+    res.status(201).json(newJob);
+    console.log("Job added successfully");
+  } catch (error) {
+    console.error("Error adding job:", error);
+    res.status(500).json({ error: "Failed to add job" });
+  }
+});
+
+// Route to fetch all jobs
+app.get("/api/jobs", async (req, res) => {
+  console.log("Received request to fetch jobs");
+  try {
+    const jobs = await Job.find();
+    res.json(jobs);
+    console.log("Jobs fetched successfully");
+  } catch (error) {
+    console.error("Error fetching jobs:", error);
+    res.status(500).json({ error: "Failed to fetch jobs" });
+  }
+});
 
 // Start server
 app.listen(PORT, () => {
