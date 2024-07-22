@@ -38,7 +38,7 @@ mongoose
 // Routes
 
 app.get("/", (req, res) => {
-  res.send("Server in Running.......");
+  res.send("Running in production......");
 });
 
 // Route to add a new student
