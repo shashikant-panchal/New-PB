@@ -7,6 +7,8 @@ const studentSchema = new mongoose.Schema({
   dob: String,
   phone: String,
   branch: String,
+  email: String,
+  password: String, 
     selected: {
     type: Boolean,
     default: false, 
