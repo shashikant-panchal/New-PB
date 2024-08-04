@@ -179,6 +179,7 @@ const companySchema = new mongoose.Schema({
   website: String,
   phone: String,
   email: String,
+  password: String, 
 });
 const Company = mongoose.model("Company", companySchema);
 
@@ -196,13 +197,27 @@ app.get("/api/companies", async (req, res) => {
 
 app.post("/api/companies", async (req, res) => {
   console.log("Received request to add company");
+  const { companyName, address, website, phone, email, password } = req.body;
   try {
-    const newCompany = await Company.create(req.body);
+    const newCompany = new Company({ companyName, address, website, phone, email, password });
+    await newCompany.save();
     res.status(201).json(newCompany);
     console.log("Company added successfully");
   } catch (error) {
     console.error("Error adding company:", error);
     res.status(500).json({ error: "Failed to add company" });
+  }
+});
+
+app.post("/api/companies/login", async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const company = await Company.findOne({ email });
+    if (!company) return res.status(400).json({ message: 'Invalid email or password' });
+    if (company.password !== password) return res.status(400).json({ message: 'Invalid email or password' });
+    res.json({ message: 'Login successful', companyId: company._id });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to login' });
   }
 });
 
@@ -218,6 +233,7 @@ app.delete("/api/companies/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to delete company" });
   }
 });
+
 
 const jobSchema = new mongoose.Schema({
   companyName: String,
