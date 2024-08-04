@@ -123,10 +123,10 @@ app.get("/api/students", async (req, res) => {
 // HOD Routes
 app.post("/api/hods", async (req, res) => {
   console.log("Received request to add HOD");
-   const { name, address, gender, department, phone, branch, email, password } = req.body;
+  const { name, address, gender, department, phone, branch, email, password } = req.body;
   try {
-     const hod = new newHOD({ name, address, gender, department, phone, branch, email, password });
-     await hod.save();
+    const hod = new HOD({ name, address, gender, department, phone, branch, email, password });
+    await hod.save();
     res.status(201).json(hod);
     console.log("HOD added successfully");
   } catch (error) {
@@ -135,7 +135,7 @@ app.post("/api/hods", async (req, res) => {
   }
 });
 
-app.post("/api/login", async (req, res) => {
+app.post("/api/hods/login", async (req, res) => {
   const { email, password } = req.body;
   try {
     const hod = await HOD.findOne({ email });
@@ -158,7 +158,6 @@ app.get("/api/hods", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch HODs" });
   }
 });
-
 
 app.delete("/api/hods/:id", async (req, res) => {
   console.log(`Received request to delete HOD with ID: ${req.params.id}`);
