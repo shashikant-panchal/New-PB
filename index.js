@@ -271,19 +271,52 @@ app.get("/api/jobs", async (req, res) => {
 });
 
 // Notifications
-let notifications = [];
-app.post('/api/notifications', (req, res) => {
+// let notifications = [];
+// app.post('/api/notifications', (req, res) => {
+//   const { title, message } = req.body;
+//   if (!title || !message) {
+//     return res.status(400).json({ error: 'Title and message are required' });
+//   }
+//   const newNotification = { id: notifications.length + 1, title, message };
+//   notifications.push(newNotification);
+//   res.status(201).json(newNotification);
+// });
+
+// app.get('/api/notifications', (req, res) => {
+//   res.json(notifications);
+// });
+
+const notificationSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  message: { type: String, required: true },
+});
+
+const Notification = mongoose.model('Notification', notificationSchema);
+
+// Notifications Routes
+app.post('/api/notifications', async (req, res) => {
   const { title, message } = req.body;
   if (!title || !message) {
     return res.status(400).json({ error: 'Title and message are required' });
   }
-  const newNotification = { id: notifications.length + 1, title, message };
-  notifications.push(newNotification);
-  res.status(201).json(newNotification);
+  try {
+    const newNotification = new Notification({ title, message });
+    await newNotification.save();
+    res.status(201).json(newNotification);
+  } catch (error) {
+    console.error('Error adding notification:', error);
+    res.status(500).json({ error: 'Failed to add notification' });
+  }
 });
 
-app.get('/api/notifications', (req, res) => {
-  res.json(notifications);
+app.get('/api/notifications', async (req, res) => {
+  try {
+    const notifications = await Notification.find();
+    res.json(notifications);
+  } catch (error) {
+    console.error('Error fetching notifications:', error);
+    res.status(500).json({ error: 'Failed to fetch notifications' });
+  }
 });
 
 // Start server
