@@ -19,6 +19,7 @@ const hodSchema = new mongoose.Schema({
   department: String,
   phone: String,
   email: String,
+  password: String
 });
 const HOD = mongoose.model("HOD", hodSchema);
 
@@ -133,6 +134,32 @@ app.get("/api/students", async (req, res) => {
 });
 
 // HOD Routes
+app.post("/api/hods", async (req, res) => {
+  console.log("Received request to add HOD");
+   const { name, address, gender, department, phone, branch, email, password } = req.body;
+  try {
+     const hod = new newHOD({ name, address, gender, department, phone, branch, email, password });
+     await hod.save();
+    res.status(201).json(hod);
+    console.log("HOD added successfully");
+  } catch (error) {
+    console.error("Error adding HOD:", error);
+    res.status(500).json({ error: "Failed to add HOD" });
+  }
+});
+
+app.post("/api/login", async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const hod = await HOD.findOne({ email });
+    if (!hod) return res.status(400).json({ message: 'Invalid email or password' });
+    if (hod.password !== password) return res.status(400).json({ message: 'Invalid email or password' });
+    res.json({ message: 'Login successful', hodId: hod._id });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to login' });
+  }
+});
+
 app.get("/api/hods", async (req, res) => {
   console.log("Received request to fetch HODs");
   try {
@@ -145,17 +172,6 @@ app.get("/api/hods", async (req, res) => {
   }
 });
 
-app.post("/api/hods", async (req, res) => {
-  console.log("Received request to add HOD");
-  try {
-    const newHOD = await HOD.create(req.body);
-    res.status(201).json(newHOD);
-    console.log("HOD added successfully");
-  } catch (error) {
-    console.error("Error adding HOD:", error);
-    res.status(500).json({ error: "Failed to add HOD" });
-  }
-});
 
 app.delete("/api/hods/:id", async (req, res) => {
   console.log(`Received request to delete HOD with ID: ${req.params.id}`);
