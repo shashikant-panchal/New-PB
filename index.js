@@ -68,6 +68,28 @@ app.post("/api/students", async (req, res) => {
   }
 });
 
+app.post("/api/login", async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const student = await Student.findOne({ email });
+    if (!student) return res.status(400).json({ message: 'Invalid email or password' });
+
+    if (student.password !== password) return res.status(400).json({ message: 'Invalid email or password' });
+    res.json({ message: 'Login successful', studentId: student._id });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to login' });
+  }
+});
+
+// Route to fetch all students
+app.get("/api/students", async (req, res) => {
+  try {
+    const students = await Student.find();
+    res.json(students);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 
 app.post("/api/selectStudent/:id", async (req, res) => {
   const { id } = req.params;
@@ -87,15 +109,15 @@ app.post("/api/selectStudent/:id", async (req, res) => {
   }
 });
 
-app.get("/api/selectedStudents", async (req, res) => {
-  try {
-    const selectedStudents = await Student.find({ selected: true });
-    res.json(selectedStudents);
-  } catch (err) {
-    console.error("Error fetching selected students:", err);
-    res.status(500).json({ error: "Failed to fetch selected students" });
-  }
-});
+// app.get("/api/selectedStudents", async (req, res) => {
+//   try {
+//     const selectedStudents = await Student.find({ selected: true });
+//     res.json(selectedStudents);
+//   } catch (err) {
+//     console.error("Error fetching selected students:", err);
+//     res.status(500).json({ error: "Failed to fetch selected students" });
+//   }
+// });
 
 // Route to fetch all students
 app.get("/api/students", async (req, res) => {
