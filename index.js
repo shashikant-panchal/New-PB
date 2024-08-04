@@ -42,20 +42,6 @@ app.get("/", (req, res) => {
   res.send("Server in Running........");
 });
 
-// app.post("/api/students", async (req, res) => {
-//   console.log("Received request to add student");
-//   const { name, address, gender, dob, phone, branch } = req.body;
-//   try {
-//     const student = new Student({ name, address, gender, dob, phone, branch });
-//     await student.save();
-//     res.status(201).json(student);
-//     console.log("Student added successfully");
-//   } catch (err) {
-//     console.error("Error adding student:", err);
-//     res.status(400).json({ message: err.message });
-//   }
-// });
-
 app.post("/api/students", async (req, res) => {
   console.log("Received request to add student");
   const { name, address, gender, dob, phone, branch, email, password } = req.body;
