@@ -18,6 +18,7 @@ const hodSchema = new mongoose.Schema({
   gender: String,
   department: String,
   phone: String,
+  branch: String,
   email: String,
   password: String
 });
