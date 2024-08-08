@@ -241,6 +241,9 @@ const jobSchema = new mongoose.Schema({
   twelfthPercentage: Number,
   graduationGPA: Number,
   salaryPackage: Number,
+  jobDescription: String,
+  location: String,
+  experienceRequired: String,
 });
 
 const Job = mongoose.model("Job", jobSchema);
@@ -269,22 +272,6 @@ app.get("/api/jobs", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch jobs" });
   }
 });
-
-// Notifications
-// let notifications = [];
-// app.post('/api/notifications', (req, res) => {
-//   const { title, message } = req.body;
-//   if (!title || !message) {
-//     return res.status(400).json({ error: 'Title and message are required' });
-//   }
-//   const newNotification = { id: notifications.length + 1, title, message };
-//   notifications.push(newNotification);
-//   res.status(201).json(newNotification);
-// });
-
-// app.get('/api/notifications', (req, res) => {
-//   res.json(notifications);
-// });
 
 const notificationSchema = new mongoose.Schema({
   title: { type: String, required: true },
