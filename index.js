@@ -334,15 +334,31 @@ app.post('/api/applyJob', async (req, res) => {
   }
 });
 
-app.get('/api/appliedJobs/:studentId', async (req, res) => {
-  const { studentId } = req.params;
+// app.get('/api/appliedJobs/:studentId', async (req, res) => {
+//   const { studentId } = req.params;
+//   try {
+//     const applications = await JobApplication.find({ studentId }).populate('jobId');
+//     const appliedJobs = applications.map(application => application.jobId);
+//     res.status(200).json(appliedJobs);
+//   } catch (error) {
+//     console.error('Error fetching applied jobs:', error);
+//     res.status(500).json({ message: 'An error occurred while fetching the applied jobs.' });
+//   }
+// });
+
+app.get('/api/hasApplied/:studentId/:jobId', async (req, res) => {
+  const { studentId, jobId } = req.params;
   try {
-    const applications = await JobApplication.find({ studentId }).populate('jobId');
-    const appliedJobs = applications.map(application => application.jobId);
-    res.status(200).json(appliedJobs);
+    const application = await JobApplication.findOne({ studentId, jobId });
+
+    if (application) {
+      return res.status(200).json({ applied: true });
+    } else {
+      return res.status(200).json({ applied: false });
+    }
   } catch (error) {
-    console.error('Error fetching applied jobs:', error);
-    res.status(500).json({ message: 'An error occurred while fetching the applied jobs.' });
+    console.error('Error checking job application status:', error);
+    res.status(500).json({ message: 'An error occurred while checking the application status.' });
   }
 });
 
