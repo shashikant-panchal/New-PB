@@ -334,17 +334,17 @@ app.post('/api/applyJob', async (req, res) => {
   }
 });
 
-// app.get('/api/appliedJobs/:studentId', async (req, res) => {
-//   const { studentId } = req.params;
-//   try {
-//     const applications = await JobApplication.find({ studentId }).populate('jobId');
-//     const appliedJobs = applications.map(application => application.jobId);
-//     res.status(200).json(appliedJobs);
-//   } catch (error) {
-//     console.error('Error fetching applied jobs:', error);
-//     res.status(500).json({ message: 'An error occurred while fetching the applied jobs.' });
-//   }
-// });
+app.get('/api/appliedJobs/:studentId', async (req, res) => {
+  const { studentId } = req.params;
+  try {
+    const applications = await JobApplication.find({ studentId }).populate('jobId');
+    const appliedJobs = applications.map(application => application.jobId);
+    res.status(200).json(appliedJobs);
+  } catch (error) {
+    console.error('Error fetching applied jobs:', error);
+    res.status(500).json({ message: 'An error occurred while fetching the applied jobs.' });
+  }
+});
 
 app.get('/api/hasApplied/:studentId/:jobId', async (req, res) => {
   const { studentId, jobId } = req.params;
