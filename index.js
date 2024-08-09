@@ -44,9 +44,9 @@ app.get("/", (req, res) => {
 
 app.post("/api/students", async (req, res) => {
   console.log("Received request to add student");
-  const { name, address, gender, dob, phone, branch, email, password } = req.body;
+  const { name, address, gender, dob, phone, branch, batch, email, password } = req.body;
   try {
-    const student = new Student({ name, address, gender, dob, phone, branch, email, password });
+    const student = new Student({ name, address, gender, dob, phone, branch, batch, email, password });
     await student.save();
     res.status(201).json(student);
     console.log("Student added successfully");
