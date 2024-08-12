@@ -97,15 +97,27 @@ app.post("/api/selectStudent/:id", async (req, res) => {
   }
 });
 
+// app.get("/api/selectedStudents", async (req, res) => {
+//   try {
+//     const selectedStudents = await Student.find({ selected: true });
+//     res.json(selectedStudents);
+//   } catch (err) {
+//     console.error("Error fetching selected students:", err);
+//     res.status(500).json({ error: "Failed to fetch selected students" });
+//   }
+// });
+
 app.get("/api/selectedStudents", async (req, res) => {
   try {
-    const selectedStudents = await Student.find({ selected: true });
+    const selectedStudents = await Student.find({ selected: true })
+      .populate('selectedCompany', 'companyName address website phone email');
     res.json(selectedStudents);
   } catch (err) {
     console.error("Error fetching selected students:", err);
     res.status(500).json({ error: "Failed to fetch selected students" });
   }
 });
+
 
 // Route to fetch all students
 app.get("/api/students", async (req, res) => {
