@@ -120,6 +120,31 @@ app.get("/api/students", async (req, res) => {
   }
 });
 
+// Endpoint to handle marking a job as placed
+app.post('/api/markAsPlaced', async (req, res) => {
+  const { jobId, applicants } = req.body;
+  try {
+    const job = await Job.findById(jobId).populate('companyId');
+
+    if (!job) {
+      return res.status(404).json({ message: 'Job not found.' });
+    }
+    job.isPlaced = true;
+    await job.save();
+    const studentIds = applicants.map(applicant => applicant._id);
+    const students = await Student.find({ _id: { $in: studentIds } });
+    res.status(200).json({
+      message: 'Job marked as placed successfully!',
+      students,
+      company: job.companyId,
+    });
+  } catch (error) {
+    console.error('Error marking job as placed:', error);
+    res.status(500).json({ message: 'An error occurred while marking the job as placed.' });
+  }
+});
+
+
 // HOD Routes
 app.post("/api/hods", async (req, res) => {
   console.log("Received request to add HOD");
