@@ -13,7 +13,8 @@ const studentSchema = new mongoose.Schema({
     selected: {
     type: Boolean,
     default: false, 
-  }
+  },
+  selectedCompany: { type: mongoose.Schema.Types.ObjectId, ref: 'Company' }
 });
 
 module.exports = mongoose.model('Student', studentSchema);
