@@ -310,22 +310,25 @@ const jobApplicationSchema = new mongoose.Schema({
   studentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Student', required: true },
   jobId: { type: mongoose.Schema.Types.ObjectId, ref: 'Job', required: true },
   appliedAt: { type: Date, default: Date.now },
+  userData: { type: Object, required: false }, 
 });
 
 const JobApplication = mongoose.model('JobApplication', jobApplicationSchema);
 
 // Endpoint to handle job applications
 app.post('/api/applyJob', async (req, res) => {
-  const { studentId, jobId } = req.body;
-
+  const { studentId, jobId, userData } = req.body;
   try {
     const existingApplication = await JobApplication.findOne({ studentId, jobId });
 
     if (existingApplication) {
       return res.status(400).json({ message: 'You have already applied for this job.' });
     }
-
-    const jobApplication = new JobApplication({ studentId, jobId });
+    const jobApplication = new JobApplication({
+      studentId,
+      jobId,
+      userData,
+    });
     await jobApplication.save();
     res.status(201).json({ message: 'Application submitted successfully!' });
   } catch (error) {
@@ -333,6 +336,20 @@ app.post('/api/applyJob', async (req, res) => {
     res.status(500).json({ message: 'An error occurred while applying for the job.' });
   }
 });
+
+app.get('/api/jobApplicants/:jobId', async (req, res) => {
+  const { jobId } = req.params;
+
+  try {
+    const applications = await JobApplication.find({ jobId }).populate('studentId');
+    const applicants = applications.map(application => application.studentId);
+    res.status(200).json(applicants);
+  } catch (error) {
+    console.error('Error fetching job applicants:', error);
+    res.status(500).json({ message: 'An error occurred while fetching the job applicants.' });
+  }
+});
+
 
 app.get('/api/appliedJobs/:studentId', async (req, res) => {
   const { studentId } = req.params;
