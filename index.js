@@ -120,27 +120,24 @@ app.get("/api/students", async (req, res) => {
   }
 });
 
-// Endpoint to handle marking a job as placed
-app.post('/api/markAsPlaced', async (req, res) => {
-  const { jobId, applicants } = req.body;
+app.post('/api/markApplicantAsPlaced', async (req, res) => {
+  const { jobId, applicantId } = req.body;
   try {
-    const job = await Job.findById(jobId).populate('companyId');
-
+    const job = await Job.findById(jobId);
     if (!job) {
       return res.status(404).json({ message: 'Job not found.' });
     }
-    job.isPlaced = true;
+    const applicant = job.applicants.find(app => app._id.toString() === applicantId);
+    if (!applicant) {
+      return res.status(404).json({ message: 'Applicant not found in this job.' });
+    }
+    applicant.isPlaced = true;
     await job.save();
-    const studentIds = applicants.map(applicant => applicant._id);
-    const students = await Student.find({ _id: { $in: studentIds } });
-    res.status(200).json({
-      message: 'Job marked as placed successfully!',
-      students,
-      company: job.companyId,
-    });
+    await Student.findByIdAndUpdate(applicantId, { $set: { isPlaced: true } });
+    res.status(200).json({ message: 'Applicant marked as placed successfully!' });
   } catch (error) {
-    console.error('Error marking job as placed:', error);
-    res.status(500).json({ message: 'An error occurred while marking the job as placed.' });
+    console.error('Error marking applicant as placed:', error);
+    res.status(500).json({ message: 'An error occurred while marking the applicant as placed.' });
   }
 });
 
