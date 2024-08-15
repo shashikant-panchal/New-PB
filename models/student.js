@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const studentSchema = new mongoose.Schema({
   name: String,
@@ -9,12 +9,13 @@ const studentSchema = new mongoose.Schema({
   branch: String,
   batch: String,
   email: String,
-  password: String, 
-    selected: {
+  password: String,
+  pdf: String,
+  selected: {
     type: Boolean,
-    default: false, 
+    default: false,
   },
-  selectedCompany: { type: mongoose.Schema.Types.ObjectId, ref: 'Company' }
+  selectedCompany: { type: mongoose.Schema.Types.ObjectId, ref: "Company" },
 });
 
-module.exports = mongoose.model('Student', studentSchema);
+module.exports = mongoose.model("Student", studentSchema);
