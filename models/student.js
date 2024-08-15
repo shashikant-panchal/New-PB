@@ -10,7 +10,6 @@ const studentSchema = new mongoose.Schema({
   batch: String,
   email: String,
   password: String,
-  pdf: String,
   selected: {
     type: Boolean,
     default: false,
