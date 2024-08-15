@@ -1,27 +1,12 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
 const bodyParser = require("body-parser");
 const Student = require("./models/student");
 const cors = require("cors");
-require("dotenv").config(); // Load environment variables from .env file
+require("dotenv").config(); 
 
 const app = express();
-const PORT = process.env.PORT || 5000; // Use port from .env or default to 5000
-
-// Configure Multer
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/"); // Set destination folder
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); // Set filename
-  },
-});
-
-const upload = multer({ storage });
+const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(bodyParser.json());
@@ -57,59 +42,19 @@ app.get("/", (req, res) => {
   res.send("Server in Running........");
 });
 
-// app.post("/api/students", async (req, res) => {
-//   console.log("Received request to add student");
-//   const { name, address, gender, dob, phone, branch, batch, email, password } = req.body;
-//   try {
-//     const student = new Student({ name, address, gender, dob, phone, branch, batch, email, password });
-//     await student.save();
-//     res.status(201).json(student);
-//     console.log("Student added successfully");
-//   } catch (err) {
-//     console.error("Error adding student:", err);
-//     res.status(400).json({ message: err.message });
-//   }
-// });
-
-app.post("/api/students", upload.single("pdf"), async (req, res) => {
+app.post("/api/students", async (req, res) => {
+  console.log("Received request to add student");
+  const { name, address, gender, dob, phone, branch, batch, email, password } = req.body;
   try {
-    const newStudent = new Student({
-      name: req.body.name,
-      address: req.body.address,
-      gender: req.body.gender,
-      dob: req.body.dob,
-      phone: req.body.phone,
-      branch: req.body.branch,
-      batch: req.body.batch,
-      email: req.body.email,
-      password: req.body.password,
-      pdf: req.file ? req.file.filename : null,
-    });
-
-    const savedStudent = await newStudent.save();
-    res.status(201).json(savedStudent);
-  } catch (error) {
-    console.error("Error adding student:", error);
-    res.status(500).json({ error: "Internal server error" });
+    const student = new Student({ name, address, gender, dob, phone, branch, batch, email, password });
+    await student.save();
+    res.status(201).json(student);
+    console.log("Student added successfully");
+  } catch (err) {
+    console.error("Error adding student:", err);
+    res.status(400).json({ message: err.message });
   }
 });
-
-app.post("/api/selectStudent/:id", async (req, res) => {
-  try {
-    const student = await Student.findById(req.params.id);
-    if (!student) {
-      return res.status(404).json({ error: "Student not found" });
-    }
-    res.status(200).json({ message: "Student selected successfully" });
-  } catch (error) {
-    console.error("Error selecting student:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-if (!fs.existsSync("uploads")) {
-  fs.mkdirSync("uploads");
-}
 
 app.post("/api/login", async (req, res) => {
   const { email, password } = req.body;
@@ -136,23 +81,23 @@ app.get("/api/students", async (req, res) => {
   }
 });
 
-// app.post("/api/selectStudent/:id", async (req, res) => {
-//   const { id } = req.params;
-//   try {
-//     const selectedStudent = await Student.findByIdAndUpdate(
-//       id,
-//       { selected: true },
-//       { new: true }
-//     );
-//     if (!selectedStudent) {
-//       return res.status(404).json({ error: "Student not found" });
-//     }
-//     res.json(selectedStudent);
-//   } catch (error) {
-//     console.error("Error selecting student:", error);
-//     res.status(500).json({ error: "Failed to select student" });
-//   }
-// });
+app.post("/api/selectStudent/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const selectedStudent = await Student.findByIdAndUpdate(
+      id,
+      { selected: true },
+      { new: true }
+    );
+    if (!selectedStudent) {
+      return res.status(404).json({ error: "Student not found" });
+    }
+    res.json(selectedStudent);
+  } catch (error) {
+    console.error("Error selecting student:", error);
+    res.status(500).json({ error: "Failed to select student" });
+  }
+});
 
 // app.get("/api/selectedStudents", async (req, res) => {
 //   try {
