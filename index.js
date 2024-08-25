@@ -135,6 +135,25 @@ app.get("/api/students", async (req, res) => {
   }
 });
 
+app.put("/api/students/:id", async (req, res) => {
+  const { id } = req.params;
+  const updates = req.body;
+
+  try {
+    const updatedStudent = await Student.findByIdAndUpdate(id, updates, {
+      new: true,
+      runValidators: true,
+    });
+    if (!updatedStudent) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+    res.json(updatedStudent);
+  } catch (err) {
+    console.error("Error updating student:", err);
+    res.status(400).json({ message: err.message });
+  }
+});
+
 app.post("/api/markApplicantAsPlaced", async (req, res) => {
   const { jobId, applicantId } = req.body;
   try {
