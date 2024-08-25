@@ -330,7 +330,7 @@ const jobSchema = new mongoose.Schema({
   jobDescription: String,
   location: String,
   experienceRequired: String,
-  dateAdded:String,
+  currentDate:String,
 });
 
 const Job = mongoose.model("Job", jobSchema);
