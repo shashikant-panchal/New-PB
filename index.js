@@ -150,9 +150,10 @@ app.put("/api/students/:id", async (req, res) => {
     res.json(updatedStudent);
   } catch (err) {
     console.error("Error updating student:", err);
-    res.status(400).json({ message: err.message });
+    res.status(500).json({ message: "Internal Server Error" }); 
   }
 });
+
 
 app.post("/api/markApplicantAsPlaced", async (req, res) => {
   const { jobId, applicantId } = req.body;
