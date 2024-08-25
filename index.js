@@ -330,10 +330,7 @@ const jobSchema = new mongoose.Schema({
   jobDescription: String,
   location: String,
   experienceRequired: String,
-   dateAdded: {
-    type: Date,
-    default: Date.now, 
-  },
+  dateAdded:String,
 });
 
 const Job = mongoose.model("Job", jobSchema);
@@ -342,21 +339,6 @@ app.post("/api/jobs", async (req, res) => {
   console.log("Received request to add job");
   try {
     const newJob = await Job.create(req.body);
-    res.status(201).json(newJob);
-    console.log("Job added successfully");
-  } catch (error) {
-    console.error("Error adding job:", error);
-    res.status(500).json({ error: "Failed to add job" });
-  }
-});
-
-app.post("/api/jobs", async (req, res) => {
-  console.log("Received request to add job");
-  try {
-    const newJob = new Job({
-      ...req.body, 
-    });
-    await newJob.save();
     res.status(201).json(newJob);
     console.log("Job added successfully");
   } catch (error) {
